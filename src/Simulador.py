@@ -2,10 +2,10 @@ import random
 import math
 import sys
 
-from Util import Util
-from Leitor import Leitor
-from Relatorio import Relatorio
-from Logger import Logger
+from util import Util
+from leitor import Leitor
+from relatorio import Relatorio
+from logger import Logger
 
 '''Parametros'''
 NUMERO_PARTICULAS = 10;
