@@ -6,10 +6,10 @@ from Relatorio import Relatorio
 from utils import Util
 
 '''Parametros'''
-NUMERO_PARTICULAS = 50;
-VELOCIDADE_MAX = 20; # Velocidade maxima representa o maximo numero de mudancas.  Intervalo: 0 >= VELOCIDADE_MAX < Numero de cidades
+NUMERO_PARTICULAS = 30;
+VELOCIDADE_MAX = 40; # Velocidade maxima representa o maximo numero de mudancas.  Intervalo: 0 >= VELOCIDADE_MAX < Numero de cidades
 
-NUMERO_ITERACOES = 200
+NUMERO_ITERACOES = 500
 
 NUMERO_CIDADES = 280
 ALVO = 86.63 # Distancia otima conhecida.
@@ -121,7 +121,7 @@ def criar_particulas():
         
         particulas.append(nova_particula)
         
-        for j in range(10): # just any number of times to randomize them.
+        for j in range(NUMERO_CIDADES): # just any number of times to randomize them.
             dispor_aleatoriamente(len(particulas) - 1)
         
         get_distancia_total(len(particulas) - 1)
@@ -202,7 +202,7 @@ def atualiza_particulas():
                     dispor_aleatoriamente(i)
                 
                 # Push it closer to it's best neighbor.
-                copiar_da_particula(i - 1, i)
+                copiar_da_particula(0, i)
             
             # Update pBest value.
             get_distancia_total(i)
