@@ -101,6 +101,8 @@ class Leitor(object):
                         if idx + 1 == nro:
                             continue
                         distances[nro][idx+1] = distance
+                        distances.setdefault(idx+1, {})
+                        distances[idx+1][nro] = distance
                     nro +=1
             return DataDistances(distances,docs)
 
@@ -114,14 +116,13 @@ class Leitor(object):
                 if content.strip() and 'EOF' not in content:
                     d = map(int,re.findall(r'(\d+)', content))
                     distances.setdefault(nro, {})
+                    start = nro + 1
                     for idx, distance in enumerate(d):
-                        #if idx + 1 == nro:
-                        #    continue
-                        distances[nro][idx+1] = distance
+                        distances[nro][start+idx] = distance
+                        distances.setdefault(start+idx, {})
+                        distances[start+idx][nro] = distance
                     nro +=1
-            return DataDistances(distances,docs)
-
-    
+            return DataDistances(distances,docs) 
 
     @staticmethod
     def cria_coordenadas(caminho=None, tipo_arquivo=None):
