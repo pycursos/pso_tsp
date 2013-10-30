@@ -1,19 +1,17 @@
 import random
 import math
 import sys
-
-from util import Util
-from leitor import Leitor
-from relatorio import Relatorio
-from logger import Logger
+from Leitor import Leitor
+from Relatorio import Relatorio
+from utils import Util
 
 '''Parametros'''
-NUMERO_PARTICULAS = 10;
-VELOCIDADE_MAX = 4; # Velocidade maxima representa o maximo numero de mudancas.  Intervalo: 0 >= VELOCIDADE_MAX < Numero de cidades
+NUMERO_PARTICULAS = 50;
+VELOCIDADE_MAX = 20; # Velocidade maxima representa o maximo numero de mudancas.  Intervalo: 0 >= VELOCIDADE_MAX < Numero de cidades
 
-NUMERO_ITERACOES = 10000
+NUMERO_ITERACOES = 200
 
-NUMERO_CIDADES = 8
+NUMERO_CIDADES = 280
 ALVO = 86.63 # Distancia otima conhecida.
 
 ''''Variaveis Globais'''
@@ -82,10 +80,14 @@ def get_distancia_total(index):
     
     return
 
-def cria_mapa():
-    XLocs, YLocs = Leitor.cria_matriz()
+def cria_mapa(caminho=None, tipo_arquivo=None):
+    data = Leitor.cria_coordenadas(caminho, tipo_arquivo)
+    XLocs = data.x_coords
+    YLocs = data.y_coords
     
-    for i in range(NUMERO_CIDADES):
+    numero_cidades = len(data.cities)
+    
+    for i in range(numero_cidades):
         nova_cidade = Cidade()
         
         nova_cidade.set_x(XLocs[i])
@@ -191,7 +193,9 @@ def atualiza_particulas():
         if i > 0:
             # The higher the velocity score, the more n_mudancas it will need.
             n_mudancas = math.floor(math.fabs(particulas[i].get_velocidade()))
-            sys.stdout.write("Mudancas para a particula " + str(i) + ": " + str(n_mudancas) + "\n")
+            
+            #sys.stdout.write("Mudancas para a particula " + str(i) + ": " + str(n_mudancas) + "\n")
+            
             for j in range(n_mudancas):
                 # 50/50 chance.
                 if random.random() > 0.5:
@@ -217,13 +221,14 @@ def executar_DPSO():
         # if the Target value has been found.
         if iteracao < NUMERO_ITERACOES:
             for i in range(NUMERO_PARTICULAS):
-                sys.stdout.write("Rota: ")
+                #sys.stdout.write("Rota: ")
                 
                 for j in range(NUMERO_CIDADES):
-                    sys.stdout.write(str(particulas[i].get_posicao(j)) + ", ")
+                    #sys.stdout.write(str(particulas[i].get_posicao(j)) + ", ")
+                    pass
                 
                 get_distancia_total(i)
-                sys.stdout.write("Distancia: " + str(particulas[i].get_fitness()) + "\n")
+                #sys.stdout.write("Distancia: " + str(particulas[i].get_fitness()) + "\n")
                 
                 if particulas[i].get_fitness() <= ALVO:
                     fim = True
@@ -231,13 +236,15 @@ def executar_DPSO():
             Util.quicksort(particulas, 0, len(particulas) - 1)
             # list has to sorted in order for get_velocidade() to work.
             
+            sys.stdout.write("Iteracao " + str(iteracao) + ": " + str(particulas[0].get_fitness()) + "\n")
+            
             melhores_particulas.append(particulas[0].get_fitness())
             
             get_velocidade()
             
             atualiza_particulas()
             
-            sys.stdout.write("Iteracao: " + str(iteracao) + "\n")
+            #sys.stdout.write("Iteracao: " + str(iteracao) + "\n")
             
             iteracao += 1
         
@@ -248,7 +255,7 @@ def executar_DPSO():
 
 
 if __name__ == '__main__':
-    cria_mapa()
+    cria_mapa('./data/a280.tsp', 'C')
     total_iteracoes = executar_DPSO()
     Relatorio.imprimir_resultado(particulas, ALVO, NUMERO_CIDADES)
     Relatorio.imprimir_grafico(range(total_iteracoes), melhores_particulas)

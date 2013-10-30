@@ -31,8 +31,8 @@ class Relatorio(object):
         
         #ax.legend("",'upper left', shadow=True)
         
-        ax.set_yticks(range(0,150,10))
-        ax.set_xticks(range(0,len(iterations),10))
+        #ax.set_yticks(range(0,150,10))
+        #ax.set_xticks(range(0,len(iterations),10))
         ax.grid(True)
         ax.set_ylabel('Fitness',fontsize=14)
         ax.set_xlabel('Iteracoes', fontsize=14)

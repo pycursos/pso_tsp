@@ -121,9 +121,14 @@ class Leitor(object):
                     nro +=1
             return DataDistances(distances,docs)
 
+    
+
     @staticmethod
-    def cria_matriz():
-        return Leitor.stub()
+    def cria_coordenadas(caminho=None, tipo_arquivo=None):
+        if caminho == None:
+            return Leitor.stub()
+        else:
+            return Leitor.ler_arquivo(caminho, tipo_arquivo)
         
     @staticmethod
     def stub():
@@ -131,4 +136,4 @@ class Leitor(object):
         XLocs = [30, 40, 40, 29, 19, 9, 9, 20]  
         YLocs = [5, 10, 20, 25, 25, 19, 9, 5]
         
-        return XLocs, YLocs
+        return DataCoords(range(len(XLocs)),XLocs, YLocs, None)

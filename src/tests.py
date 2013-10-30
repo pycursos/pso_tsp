@@ -2,7 +2,7 @@
 
 
 import unittest
-from leitor import Leitor
+from Leitor import Leitor
 
 
 class TesteLeitor(unittest.TestCase):
