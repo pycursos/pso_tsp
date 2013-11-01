@@ -1,25 +1,30 @@
 import random
 import math
 import sys
+import os
 from Leitor import Leitor
 from Relatorio import Relatorio
 from utils import Util
 
 '''Parametros'''
-NUMERO_PARTICULAS = 30;
-VELOCIDADE_MAX = 40; # Velocidade maxima representa o maximo numero de mudancas.  Intervalo: 0 >= VELOCIDADE_MAX < Numero de cidades
 
-NUMERO_ITERACOES = 500
+parametros = {'a280': {'NUMERO_PARTICULAS': 1000, 'VELOCIDADE_MAX': 30, 
+                    'NUMERO_ITERACOES': 500, 'NUMERO_CIDADES': 280, 'ALVO': 2800},
+                'br17' : {'NUMERO_PARTICULAS': 30, 'VELOCIDADE_MAX': 60,
+                    'NUMERO_ITERACOES': 500, 'NUMERO_CIDADES': 500, 'ALVO': 86.63},
+                'brazil58': {'NUMERO_PARTICULAS': 30, 'VELOCIDADE_MAX': 60,
+                    'NUMERO_ITERACOES': 500, 'NUMERO_CIDADES': 500, 'ALVO': 86.63}}
 
-NUMERO_CIDADES = 280
-ALVO = 86.63 # Distancia otima conhecida.
+
+NUMERO_PARTICULAS = VELOCIDADE_MAX = NUMERO_ITERACOES = NUMERO_CIDADES = ALVO = None
+# Velocidade maxima representa o maximo numero de mudancas.  Intervalo: 0 >= VELOCIDADE_MAX < Numero de cidades
 
 ''''Variaveis Globais'''
 particulas = []
 melhores_particulas = []
 
-mapa = [];
-
+mapa = []
+get_distancia = None
 
 class Particula:
     def __init__(self):
@@ -62,12 +67,16 @@ class Cidade:
     def set_y(self, yCoordenada):
         self.mY = yCoordenada
 
-def get_distancia(cidade1, cidade2):
+def get_distancia_coords(cidade1, cidade2):
     cidadeA = mapa[cidade1]
     cidadeB = mapa[cidade2]
     a2 = math.pow(math.fabs(cidadeA.get_x() - cidadeB.get_x()), 2)
     b2 = math.pow(math.fabs(cidadeA.get_y() - cidadeB.get_y()), 2)
     return math.sqrt(a2 + b2)
+
+def get_distancia_distances(cidade1, cidade2):
+    dist = mapa[cidade1][cidade2]
+    return dist
 
 def get_distancia_total(index):
     particulas[index].set_fitness(0.0)
@@ -81,19 +90,27 @@ def get_distancia_total(index):
     return
 
 def cria_mapa(caminho=None, tipo_arquivo=None):
+    global mapa, get_distancia
     data = Leitor.cria_coordenadas(caminho, tipo_arquivo)
-    XLocs = data.x_coords
-    YLocs = data.y_coords
-    
-    numero_cidades = len(data.cities)
-    
-    for i in range(numero_cidades):
-        nova_cidade = Cidade()
+
+    if tipo_arquivo == 'C':
+        XLocs = data.x_coords
+        YLocs = data.y_coords
+
+        get_distancia = get_distancia_coords
         
-        nova_cidade.set_x(XLocs[i])
-        nova_cidade.set_y(YLocs[i])
-        mapa.append(nova_cidade)
+        numero_cidades = len(data.cities)
+        
+        for i in range(numero_cidades):
+            nova_cidade = Cidade() 
+            nova_cidade.set_x(XLocs[i])
+            nova_cidade.set_y(YLocs[i])
+            mapa.append(nova_cidade)
     
+    elif tipo_arquivo in ['M', 'N']:
+        mapa = data.distances
+        get_distancia = get_distancia_distances
+        
     return
 
 def dispor_aleatoriamente(index = 0):
@@ -255,8 +272,21 @@ def executar_DPSO():
 
 
 if __name__ == '__main__':
-    cria_mapa('./data/a280.tsp', 'C')
+    global NUMERO_PARTICULAS, VELOCIDADE_MAX, NUMERO_ITERACOES, NUMERO_CIDADES, ALVO
+
+    path = os.path.abspath(os.path.dirname(sys.argv[0]))
+    cria_mapa(path+ '/data/a280.tsp', 'C')
+    NUMERO_PARTICULAS = parametros['a280']['NUMERO_PARTICULAS']
+    VELOCIDADE_MAX = parametros['a280']['VELOCIDADE_MAX']
+    NUMERO_ITERACOES = parametros['a280']['NUMERO_ITERACOES']
+    NUMERO_CIDADES = parametros['a280']['NUMERO_CIDADES']
+    ALVO = parametros['a280']['ALVO']
+
+    simulacao1 = 'Simulador rodando com %d particulas, %d iteracoes, Velocidade Maxima: %d e com numero de cidades %d'
+    print NUMERO_PARTICULAS, VELOCIDADE_MAX, NUMERO_ITERACOES, NUMERO_CIDADES, ALVO
+
+    print simulacao1 % (NUMERO_PARTICULAS, NUMERO_ITERACOES, VELOCIDADE_MAX, NUMERO_CIDADES)
     total_iteracoes = executar_DPSO()
     Relatorio.imprimir_resultado(particulas, ALVO, NUMERO_CIDADES)
     Relatorio.imprimir_grafico(range(total_iteracoes), melhores_particulas)
-    
+
