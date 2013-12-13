@@ -4,20 +4,31 @@ Created on 11/12/2013
 @author: periclesmiranda
 '''
 import copy
-from Topologia import Topologia
+from topologias import Topologia
+import random
+from Constants import Constants
 
 class Focal(Topologia):
 
     def __init__(self):
-        pass
+        self.particula_focal_indice = random.randint(0, Constants.TAM_BANDO-1)
     
-    #Seleciona posicao fixa do bando.
-    def getG(self, bando):
-        return bando[0]
-    
-    def _getG(self):
-        return self.g;
-    
-    def _setG(self, passaro):
-        self.g = copy.deepcopy(passaro);
+    #Seleciona a melhor solucao do enxame.
+    def getG(self, passaro_indice=None, bando=None):
+        
+        melhor_passaro = None
+        
+        if passaro_indice == self.particula_focal_indice:
+            #Prestar atenção...pois ordena em ordem crescente!!! Válido apenas para problemas de minimização!!
+            bando_ordenado = sorted(bando, key = lambda p: p.p_fitness);
+            melhor_passaro = bando_ordenado[0];
+            
+        else:
+            if bando[passaro_indice].p_fitness < bando[self.particula_focal_indice].p_fitness:
+                melhor_passaro = bando[passaro_indice]
+            else:
+                melhor_passaro = bando[self.particula_focal_indice]
+        
+        g = copy.deepcopy(melhor_passaro);
+        return g;
         

@@ -51,18 +51,19 @@ class PSO(object):
     
     def _executar(self):
         for i in range(0, Constants.TAM_BANDO):
-            self.atualizaInformacao(self.passaros[i], self.topologia._getG());
+            self.atualizaInformacao(i);
             
             self.passaros[i].fitness = Sphere.evaluate(self.passaros[i].posicao)
             
             self.passaros[i].atualizaP();
-            self.topologia.atualizaInformacao(self.passaros[i]);
     
-    def atualizaInformacao(self, passaro, g):
-        for i in range(0, Constants.TAM_BANDO):
-            self.__atualizaVelocidade(passaro, g, i);
+    def atualizaInformacao(self, indice_passaro):
+        g_best = self.topologia.getG(indice_passaro, self.passaros)
+        
+        for i in range(0, Constants.N_DIMENSION):
+            self.__atualizaVelocidade(self.passaros[indice_passaro], g_best, i);
             
-        self.__atualizaPosicao(passaro);
+        self.__atualizaPosicao(self.passaros[indice_passaro]);
     
     def __atualizaPosicao(self, passaro):
         velocidade_atual = sum(passaro.velocidade)/Constants.N_DIMENSION;
@@ -76,7 +77,7 @@ class PSO(object):
             # Push it closer to it's best neighbor.
             Util.copiar_da_particula(passaro.g, passaro.posicao)
     
-    def __atualizaVelocidade(self, passaro, g, i):
+    def __atualizaVelocidade(self, passaro, g_best, i):
         c1 = Constants.C1;
         c2 = Constants.C2;
         
@@ -85,7 +86,7 @@ class PSO(object):
         posicao_atual = passaro.posicao[i];
         p = passaro.p[i];
         
-        passaro.g = g.p[::];
+        passaro.g = g_best.p[::];
         
         nova_velocidade = 0.4*velocidade_atual + c1*random.random()*(p - posicao_atual) + c2*random.random()*(passaro.g[i] - posicao_atual);
         

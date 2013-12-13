@@ -4,7 +4,7 @@ Created on 18/08/2012
 @author: periclesmiranda
 '''
 import copy
-from Topologia import Topologia
+from topologias import Topologia
 
 class Estrela(Topologia):
 
@@ -12,18 +12,14 @@ class Estrela(Topologia):
         pass
 
     #Seleciona a melhor solucao do enxame.
-    def getG(self, bando):
-        bando_ordenado = sorted(bando, key = lambda passaro: passaro.fitness);
+    def getG(self, passaro_indice=None, bando=None):
+        
+        #Prestar atenção...pois ordena em ordem crescente!!! Válido apenas para problemas de minimização!!
+        bando_ordenado = sorted(bando, key = lambda p: p.p_fitness);
         melhor_passaro = bando_ordenado[0];
         
-        self.g = copy.deepcopy(melhor_passaro);
-        return self.g;
-    
-    def _getG(self):
-        return self.g;
-    
-    def _setG(self, passaro):
-        self.g = copy.deepcopy(passaro);
+        g = copy.deepcopy(melhor_passaro);
+        return g;
             
 
         
