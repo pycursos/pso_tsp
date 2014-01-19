@@ -144,3 +144,11 @@ if __name__ == '__main__':
     path = os.path.abspath(os.path.dirname(sys.argv[1]))
     data = Leitor.cria_coordenadas(path+ '/data/a280.tsp', 'C')
     print data
+    data = Leitor.cria_coordenadas(path+ '/data/br17.atsp', 'M')
+    print data
+    data = Leitor.cria_coordenadas(path+ '/data/brazil58.tsp', 'N')
+    print data
+
+
+
+
