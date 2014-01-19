@@ -183,7 +183,7 @@ class TSP_PSO(PSO):
             self._executar();
             print "Simulacao " + str((float(i) / TSPConstants.NUMERO_ITERACOES) * 100) + "%";
 
-            melhor_passaro = self.topologia._getG().p_fitness;
+            melhor_passaro = self.topologia.getG().p_fitness;
             fitnesses.append(melhor_passaro);
 
         print fitnesses
@@ -245,5 +245,4 @@ if __name__ == '__main__':
     TSPConstants.N_DIMENSION = len(mapa)
 
     algorithm = TSP_PSO(mapa, Estrela)
-    #print TSPConstants.N_DIMENSION
-
+    algorithm.simular()

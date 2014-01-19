@@ -3,8 +3,8 @@ Created on 11/12/2013
 
 @author: periclesmiranda
 '''
-from random import Random
-from Constants import Constants
+
+from Constants import TSPConstants as Constants
 import random
 
 class Util(object):
@@ -13,7 +13,7 @@ class Util(object):
     @staticmethod
     def copiar_da_particula(fonte, destino):
         # push destino's data points closer to fonte's data points.
-        alvoA = Random.randrange(0, Constants.N_DIMENSION) # fonte's city to target.
+        alvoA = random.randrange(0, Constants.N_DIMENSION) # fonte's city to target.
         alvoB = 0
         indiceA = 0
         indiceB = 0
