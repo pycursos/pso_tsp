@@ -183,7 +183,7 @@ class TSP_PSO(PSO):
             self._executar();
             print "Simulacao " + str((float(i) / TSPConstants.NUMERO_ITERACOES) * 100) + "%";
 
-            melhor_passaro = self.topologia.getG().p_fitness;
+            melhor_passaro = self.topologia.getG(bando=self.passaros).p_fitness;
             fitnesses.append(melhor_passaro);
 
         print fitnesses
@@ -233,7 +233,7 @@ class TSP_PSO(PSO):
         for i in range(0, TSPConstants.TAM_BANDO):
             self.atualizaInformacao(i);
 
-            self.passaros[i].fitness = Sphere.evaluate(self.passaros[i].posicao)
+            self.passaros[i].fitness = TSP.evaluate(self.passaros[i].posicao)
 
             self.passaros[i].atualizaP();
 

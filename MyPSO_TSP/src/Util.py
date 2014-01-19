@@ -21,19 +21,19 @@ class Util(object):
 
         # alvoB will be fonte's neighbor immediately succeeding alvoA (circular).
         for i in range(Constants.N_DIMENSION):
-            if fonte.posicao[i] == alvoA:
+            if fonte[i] == alvoA:
                 if i == Constants.N_DIMENSION - 1:
-                    alvoB = fonte.posicao[0] # if end of array, take from beginning.
+                    alvoB = fonte[0] # if end of array, take from beginning.
                 else:
-                    alvoB = fonte.posicao[i + 1]
+                    alvoB = fonte[i + 1]
 
                 break
         # Move alvoB next to alvoA by switching values.
         for j in range(Constants.N_DIMENSION):
-            if destino.posicao[j] == alvoA:
+            if destino[j] == alvoA:
                 indiceA = j
 
-            if destino.posicao[j] == alvoB:
+            if destino[j] == alvoB:
                 indiceB = j
         # get temp index succeeding indiceA.
         if indiceA == Constants.N_DIMENSION - 1:
@@ -42,9 +42,9 @@ class Util(object):
             tempIndice = indiceA + 1
 
         # Switch indexB value with tempIndex value.
-        temp = destino.posicao[tempIndice]
-        destino.posicao[tempIndice] = destino.posicao[indiceB]
-        destino.posicao[indiceB] = temp
+        temp = destino[tempIndice]
+        destino[tempIndice] = destino[indiceB]
+        destino[indiceB] = temp
 
         return
 
