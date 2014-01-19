@@ -176,6 +176,67 @@ class TSP_PSO(PSO):
 
         return passaros
 
+    def simular(self):
+        fitnesses = [];
+
+        for i in range(0, TSPConstants.NUMERO_ITERACOES):
+            self._executar();
+            print "Simulacao " + str((float(i) / TSPConstants.NUMERO_ITERACOES) * 100) + "%";
+
+            melhor_passaro = self.topologia._getG().p_fitness;
+            fitnesses.append(melhor_passaro);
+
+        print fitnesses
+
+    def atualizaInformacao(self, indice_passaro):
+        g_best = self.topologia.getG(indice_passaro, self.passaros)
+
+        for i in range(0, TSPConstants.N_DIMENSION):
+            self.__atualizaVelocidade(self.passaros[indice_passaro], g_best, i);
+
+        self.__atualizaPosicao(self.passaros[indice_passaro]);
+
+    def __atualizaPosicao(self, passaro):
+        velocidade_atual = sum(passaro.velocidade)/TSPConstants.N_DIMENSION;
+
+        #A velocidade atual vai definir o numero de mudanças que vão precisar ser feitas
+        for j in range(int(velocidade_atual)):
+            # 50/50 chance.
+            if random.random() > 0.5:
+                Util.dispor_aleatoriamente(passaro)
+
+            # Push it closer to it's best neighbor.
+            Util.copiar_da_particula(passaro.g, passaro.posicao)
+
+
+    def __atualizaVelocidade(self, passaro, g_best, i):
+        c1 = TSPConstants.C1;
+        c2 = TSPConstants.C2;
+
+        velocidade_atual = passaro.velocidade[i];
+
+        posicao_atual = passaro.posicao[i];
+        p = passaro.p[i];
+
+        passaro.g = g_best.p[::];
+
+        nova_velocidade = 0.4*velocidade_atual + c1*random.random()*(p - posicao_atual) + c2*random.random()*(passaro.g[i] - posicao_atual);
+
+        if(nova_velocidade > TSPConstants.LIMITE_VELOCIDADE[1]):
+            nova_velocidade = TSPConstants.LIMITE_VELOCIDADE[1];
+        elif(nova_velocidade < TSPConstants.LIMITE_VELOCIDADE[0]):
+            nova_velocidade = TSPConstants.LIMITE_VELOCIDADE[0];
+
+        passaro.velocidade[i] = nova_velocidade;
+
+    def _executar(self):
+        for i in range(0, TSPConstants.TAM_BANDO):
+            self.atualizaInformacao(i);
+
+            self.passaros[i].fitness = Sphere.evaluate(self.passaros[i].posicao)
+
+            self.passaros[i].atualizaP();
+
 
 if __name__ == '__main__':
     import os, sys
