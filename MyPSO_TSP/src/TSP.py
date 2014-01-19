@@ -7,6 +7,23 @@ Codigo para leitura das cidades
 
 import re
 
+class Cidade:
+    def __init__(self):
+        self.mX = 0
+        self.mY = 0
+
+    def get_x(self):
+        return self.mX
+
+    def set_x(self, xCoordenada):
+        self.mX = xCoordenada
+
+    def get_y(self):
+        return self.mY
+
+    def set_y(self, yCoordenada):
+        self.mY = yCoordenada
+
 class DataCoords(object):
 
     def __init__(self, cities, x_coords, y_coords, docs):
@@ -148,7 +165,6 @@ if __name__ == '__main__':
     print data
     data = Leitor.cria_coordenadas(path+ '/data/brazil58.tsp', 'N')
     print data
-
 
 
 

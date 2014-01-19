@@ -6,11 +6,5 @@ Created on 11/12/2013
 
 class Topologia(object):
 
-    def __init__(self):
-        pass
-    
-            
     def getG(self, passaro=None, enxame=None):
         pass
-
-        

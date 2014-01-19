@@ -13,8 +13,10 @@ class Passaro(object):
         self.g = [];
         self.fitness = 0;
         self.p_fitness = 0;
-        
+
     def atualizaP(self):
         if self.fitness < self.p_fitness:
             self.p = self.posicao[::];
             self.p_fitness = self.fitness;
+
+

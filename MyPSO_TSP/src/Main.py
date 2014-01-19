@@ -10,4 +10,3 @@ class Main(object):
     pso = PSO();
     pso.simular();
 
-        
