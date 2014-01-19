@@ -8,7 +8,7 @@ from Passaro import Passaro
 import random
 from Constants import Constants, TSPConstants
 from Sphere import Sphere
-from topologias import Estrela
+from topologias.Estrela import Estrela
 from Util import Util
 from TSP import Leitor, Cidade
 
@@ -20,7 +20,7 @@ mapa  = []
 
 class TSP(object):
     @staticmethod
-    def evaluate(self, posicao):
+    def evaluate(posicao):
         fitness = 0.0
 
         for i in xrange(TSPConstants.N_DIMENSION):
@@ -151,11 +151,10 @@ class PSO(object):
 
 class TSP_PSO(PSO):
     def __init__(self, data, topologia):
-        self.passaro = self.inicializarBando()
+        self.passaros = self.inicializarBando()
         self.topologia = topologia()
 
-        self.topologia._setG(self.topologia.getG(self.passaros))
-
+        self.topologia._setG(self.topologia.getG(bando=self.passaros))
 
     def inicializarBando(self):
         passaros = []
@@ -175,7 +174,7 @@ class TSP_PSO(PSO):
 
             passaros.append(passaro);
 
-        return passaros;
+        return passaros
 
 
 if __name__ == '__main__':
@@ -184,5 +183,6 @@ if __name__ == '__main__':
     cria_mapa(path+ '/data/a280.tsp', 'C')
     TSPConstants.N_DIMENSION = len(mapa)
 
+    algorithm = TSP_PSO(mapa, Estrela)
     #print TSPConstants.N_DIMENSION
 
