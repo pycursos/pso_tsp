@@ -161,11 +161,13 @@ class TSP_PSO(PSO):
         passaros = []
         for i in range(0, TSPConstants.TAM_BANDO):
             passaro = Passaro();
-            velocity_init = [0.0]*TSPConstants.N_DIMENSION;
-            position_init = velocity_init[::];
+            velocity_init = [0.0]*TSPConstants.N_DIMENSION
 
             passaro.velocidade = velocity_init;
-            passaro.posicao = self.__rand_uniform(position_init, TSPConstants.LIMITE_ESPACO_BUSCA[0], TSPConstants.LIMITE_ESPACO_BUSCA[1]);
+            passaro.posicao = range(TSPConstants.N_DIMENSION)
+            random.shuffle(passaro.posicao)
+
+            #self.__rand_uniform(position_init, TSPConstants.LIMITE_ESPACO_BUSCA[0], TSPConstants.LIMITE_ESPACO_BUSCA[1]);
             passaro.p = passaro.posicao[::];
             passaro.g = passaro.posicao[::];
             passaro.fitness = TSP.evaluate(passaro.posicao)
