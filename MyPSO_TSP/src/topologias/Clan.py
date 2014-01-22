@@ -17,10 +17,13 @@ class Clan(Topologia):
         self.topology_bands = [Estrela() for i in range(len(number_of_clans))]
         self.clansTopology  =  Estrela()
 
+    def getClanLeader(self, indice_bando, bando):
+        return self.topology_bands[indice_bando].getG(bando=bando)
+
     def getClanLeaders(self, bandos):
         leaders = []
         for idx, topology in enumerate(self.topology_bands):
-            leaders.append(topology.getG(bando=bandos[idx]))
+            leaders.append(topology.getOriginalG(bando=bandos[idx]))
 
         return leaders
 

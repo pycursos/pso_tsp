@@ -268,6 +268,82 @@ class TSP_PSO_Clan(TSP_PSO):
 
         return clans
 
+    def simular(self):
+        fitnesses = [];
+
+        for i in range(0, TSPClanConstants.NUMERO_ITERACOES):
+            self._executar();
+            print "Simulacao " + str((float(i) / TSPClanConstants.NUMERO_ITERACOES) * 100) + "%";
+
+            melhor_passaro = self.topologia.getG(bando=self.conference).p_fitness;
+            fitnesses.append(melhor_passaro);
+
+        print fitnesses
+
+    def _executar(self):
+        #Atualizando as infos de cada clan intra.
+        for i in range(0, TSPClanConstants.NUMBER_OF_CLANS):
+            bando = self.clans[i]
+            for j in range(0, len(bando)):
+                self.atualizaInformacaoBando(bando, i, j);
+                bando[j].fitness =  TSP.evaluate(bando[j].posicao)
+                bando[j].atualizaP()
+
+        #Atualizando as infos dos clans
+        self.conference = self.topologia.getClanLeaders(bandos=self.clans)
+        for i in range(0, len(self.conference)):
+            self.atualizaInformacaoConference(self.conference, i);
+            self.conference[i].fitness = TSP.evaluate(self.conference[i].posicao)
+            self.conference[i].atualizaP();
+
+    def atualizaInformacaoConference(self, bando, indice_passaro):
+        g_best = self.topologia.clansTopology.getG(indice_passaro, bando)
+        for i in range(0, TSPConstants.N_DIMENSION):
+            self.__atualizaVelocidade(bando[indice_passaro], g_best, i);
+
+        self.__atualizaPosicao(bando[indice_passaro]);
+
+    def atualizaInformacaoBando(self, bando, indice_no_bando, indice_passaro):
+        clan_best = self.topologia.getClanLeader(indice_no_bando, bando)
+        for i in range(0, TSPClanConstants.N_DIMENSION):
+            self.__atualizaVelocidade(bando[indice_passaro], clan_best, i);
+
+        self.__atualizaPosicao(bando[indice_passaro]);
+
+    def __atualizaPosicao(self, passaro):
+        velocidade_atual = sum(passaro.velocidade)/TSPConstants.N_DIMENSION;
+
+        #A velocidade atual vai definir o numero de mudanças que vão precisar ser feitas
+        for j in range(int(velocidade_atual)):
+            # 50/50 chance.
+            if random.random() > 0.5:
+                Util.dispor_aleatoriamente(passaro)
+
+            # Push it closer to it's best neighbor.
+            Util.copiar_da_particula(passaro.g, passaro.posicao)
+
+
+    def __atualizaVelocidade(self, passaro, g_best, i):
+        c1 = TSPConstants.C1;
+        c2 = TSPConstants.C2;
+
+        velocidade_atual = passaro.velocidade[i];
+
+        posicao_atual = passaro.posicao[i];
+        p = passaro.p[i];
+
+        passaro.g = g_best.p[::];
+
+        nova_velocidade = 0.4*velocidade_atual + c1*random.random()*(p - posicao_atual) + c2*random.random()*(passaro.g[i] - posicao_atual);
+
+        if(nova_velocidade > TSPConstants.LIMITE_VELOCIDADE[1]):
+            nova_velocidade = TSPConstants.LIMITE_VELOCIDADE[1];
+        elif(nova_velocidade < TSPConstants.LIMITE_VELOCIDADE[0]):
+            nova_velocidade = TSPConstants.LIMITE_VELOCIDADE[0];
+
+        passaro.velocidade[i] = nova_velocidade;
+
+
 
 if __name__ == '__main__':
     import os, sys
@@ -276,4 +352,4 @@ if __name__ == '__main__':
     TSPConstants.N_DIMENSION = len(mapa)
 
     algorithm = TSP_PSO_Clan(mapa)
-    #algorithm.simular()
+    algorithm.simular()
