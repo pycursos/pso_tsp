@@ -44,3 +44,16 @@ class TSPConstants(object):
     C1 = 2.05
     C2 = 2.05
 
+
+class TSPClanConstants(TSPConstants):
+
+    '''
+    The number of members for each clan
+    '''
+    CLAN_SIZE = 6
+
+    '''
+    The number of  clans
+    '''
+    NUMBER_OF_CLANS =  5
+

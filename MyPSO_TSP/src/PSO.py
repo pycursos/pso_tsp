@@ -6,9 +6,10 @@ Created on 18/08/2012
 '''
 from Passaro import Passaro
 import random
-from Constants import Constants, TSPConstants
+from Constants import Constants, TSPConstants, TSPClanConstants
 from Sphere import Sphere
 from topologias.Estrela import Estrela
+from topologias.Clan import Clan
 from Util import Util
 from TSP import Leitor, Cidade
 
@@ -238,11 +239,41 @@ class TSP_PSO(PSO):
             self.passaros[i].atualizaP();
 
 
+class TSP_PSO_Clan(TSP_PSO):
+
+    def __init__(self, data):
+
+        self.passaros = self.inicializarBando()
+
+        self.clans = self.inicializarClans()
+
+        self.topologia = Clan(self.clans)
+
+        self.conference = self.topologia.getClanLeaders(bandos=self.clans)
+
+        self.topologia._setG(self.topologia.getG(bando=self.conference))
+
+    def inicializarClans(self):
+        indices_passaros = range(len(self.passaros))
+        random.shuffle(indices_passaros)
+
+        assert TSPClanConstants.TAM_BANDO == TSPClanConstants.CLAN_SIZE * TSPClanConstants.NUMBER_OF_CLANS, 'TAM_BANDO = CLAN_SIZE * NUMBER_OF_CLANS'
+
+        clans = []
+
+        for i in range(TSPClanConstants.NUMBER_OF_CLANS):
+            clans.append([])
+            for j in range(TSPClanConstants.CLAN_SIZE):
+                clans[i].append(self.passaros[indices_passaros.pop()])
+
+        return clans
+
+
 if __name__ == '__main__':
     import os, sys
     path = os.path.abspath(os.path.dirname(sys.argv[1]))
     cria_mapa(path+ '/data/a280.tsp', 'C')
     TSPConstants.N_DIMENSION = len(mapa)
 
-    algorithm = TSP_PSO(mapa, Estrela)
-    algorithm.simular()
+    algorithm = TSP_PSO_Clan(mapa)
+    #algorithm.simular()
