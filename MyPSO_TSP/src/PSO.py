@@ -6,7 +6,7 @@ Created on 18/08/2012
 '''
 from Passaro import Passaro
 import random
-from Constants import TSPConstants
+from Constants import TSPConstants, TSPClanConstants
 
 from topologias.Estrela import Estrela
 from topologias.Local import Local
@@ -18,6 +18,8 @@ from TSP import Leitor, Cidade
 import math
 from topologias.Focal import Focal
 from Relatorio import Relatorio
+from topologias import Clan
+from topologias.VonNeumann import VonNeumann
 
 ''''Variaveis Globais'''
 melhores_particulas = []
@@ -26,7 +28,7 @@ mapa  = []
 
 
 	
-class TSP_PSO_Clan(TSP_PSO):
+class TSP_PSO_Clan():
 
     def __init__(self, data):
 
@@ -89,12 +91,6 @@ def cria_mapa(caminho=None, tipo_arquivo=None):
             nova_cidade.set_x(XLocs[i])
             nova_cidade.set_y(YLocs[i])
             mapa.append(nova_cidade)
-            
-    if tipo_arquivo == 'M':
-        pass
-    if tipo_arquivo == 'N':
-        pass
-
 
 class TSP_PSO():
     def __init__(self, data, topologia):
@@ -189,30 +185,30 @@ class TSP_PSO():
 if __name__ == '__main__':
     import os, sys
     #path = os.path.abspath(os.path.dirname())
-    path_a280 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/a280.tsp'
-    path_br17 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/br17.atsp'
-    path_brazil58 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/brazil58.tsp' 
+    #path_a280 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/Teste/src/data/a280.tsp'
+    #path_br17 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/br17.atsp'
+    #path_brazil58 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/brazil58.tsp' 
     
     #Roda stub
-    #cria_mapa(None, None)
+    #cria_mapa(None, 'C')
     
     #Roda a280.tsp
-    #cria_mapa(path_a280, 'C')
+    cria_mapa(None, 'C')
     
     #Roda br17.tsp
     #cria_mapa(path_br17, 'N')
     
     #Roda brazil58.tsp
-    cria_mapa(path_brazil58, 'M')
+    #cria_mapa(path_brazil58, 'M')
     
     TSPConstants.N_DIMENSION = len(mapa)
 
-    algorithm = TSP_PSO(mapa, Estrela)
+    algorithm = TSP_PSO(mapa, VonNeumann)
     algorithm.simular()
     
     #Roda stub
-    #Relatorio.imprimir_resultado(melhores_particulas, 86.63)
+    Relatorio.imprimir_resultado(melhores_particulas, 86.63)
     
-    Relatorio.imprimir_resultado(melhores_particulas, None)
+    #Relatorio.imprimir_resultado(melhores_particulas, None)
     Relatorio.imprimir_grafico(range(TSPConstants.NUMERO_ITERACOES), fitnesses)
 
