@@ -30,3 +30,7 @@ class Clan(Topologia):
     def getG(self, passaro_indice=None, bando=None):
         return self.clansTopology.getG(passaro_indice, bando)
 
+    def _setG(self, bestP):
+        self.bestP = bestP
+
+

@@ -15,6 +15,7 @@ from Constants import TSPConstants, TSPClanConstants
 from topologias.Estrela import Estrela
 from topologias.Local import Local
 from topologias.Focal import Focal
+
 from topologias.Clan import Clan
 
 
@@ -172,8 +173,11 @@ class TSP_PSO_Clan(TSP_PSO):
 
         self.topologia = topologia(self.clans)
 
-        self.conference = self.topologia.getClanLeaders(bandos=self.clans)
+        for idx, topology in enumerate(self.topologia.topology_bands):
+            topology._setG(topology.getG(bando=self.clans[idx]))
 
+        self.conference = self.topologia.getClanLeaders(bandos=self.clans)
+        self.topologia.clansTopology._setG((self.topologia.clansTopology.getG(bando=self.conference)))
         self.topologia._setG(self.topologia.getG(bando=self.conference))
 
     def inicializarClans(self):
@@ -259,10 +263,12 @@ class TSP_PSO_Clan(TSP_PSO):
 
         nova_velocidade = 0.4*velocidade_atual + c1*random.random()*(p - posicao_atual) + c2*random.random()*(passaro.g[i] - posicao_atual);
 
+        '''
         if(nova_velocidade > TSPConstants.LIMITE_VELOCIDADE[1]):
             nova_velocidade = TSPConstants.LIMITE_VELOCIDADE[1];
         elif(nova_velocidade < TSPConstants.LIMITE_VELOCIDADE[0]):
             nova_velocidade = TSPConstants.LIMITE_VELOCIDADE[0];
+        '''
 
         passaro.velocidade[i] = nova_velocidade;
 
@@ -270,9 +276,9 @@ class TSP_PSO_Clan(TSP_PSO):
 if __name__ == '__main__':
     import os, sys
     #path = os.path.abspath(os.path.dirname())
-    path_a280 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/a280.tsp'
-    path_br17 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/br17.atsp'
-    path_brazil58 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/brazil58.tsp'
+    #path_a280 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/a280.tsp'
+    #path_br17 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/br17.atsp'
+    #path_brazil58 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/brazil58.tsp'
 
     #Roda stub
     #cria_mapa(None, None)
@@ -291,29 +297,31 @@ if __name__ == '__main__':
     #cria_mapa(path_br17, 'N')
 
     #Roda brazil58.tsp
-    cria_mapa(path_brazil58, 'M')
-
-    TSPConstants.N_DIMENSION = len(mapa)
-
-    algorithm = TSP_PSO_Clan(mapa, Clan)
-    algorithm.simular()
-
-    algorithm = TSP_PSO(mapa, Estrela)
-
     #cria_mapa(path_brazil58, 'M')
 
     TSPConstants.N_DIMENSION = len(mapa)
 
-    algorithm = TSP_PSO(mapa, VonNeumann)
+    from topologias.Clan import Clan
+
+    algorithm = TSP_PSO_Clan(mapa, Clan)
     algorithm.simular()
+
+    #algorithm = TSP_PSO(mapa, Estrela)
+
+    #cria_mapa(path_brazil58, 'M')
+
+    #TSPConstants.N_DIMENSION = len(mapa)
+
+    #algorithm = TSP_PSO(mapa, VonNeumann)
+    #algorithm.simular()
 
     #Roda stub
     #Relatorio.imprimir_resultado(melhores_particulas, 86.63)
 
-    Relatorio.imprimir_resultado(melhores_particulas, None)
+    #Relatorio.imprimir_resultado(melhores_particulas, None)
 
-    Relatorio.imprimir_resultado(melhores_particulas, 86.63)
+    #Relatorio.imprimir_resultado(melhores_particulas, 86.63)
 
     #Relatorio.imprimir_resultado(melhores_particulas, None)
-    Relatorio.imprimir_grafico(range(TSPConstants.NUMERO_ITERACOES), fitnesses)
+    #Relatorio.imprimir_grafico(range(TSPConstants.NUMERO_ITERACOES), fitnesses)
 
