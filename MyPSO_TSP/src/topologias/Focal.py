@@ -4,7 +4,7 @@ Created on 11/12/2013
 @author: periclesmiranda
 '''
 import copy
-from topologias import Topologia
+from topologias.Topologia import Topologia
 import random
 from Constants import Constants
 
@@ -18,17 +18,20 @@ class Focal(Topologia):
         
         melhor_passaro = None
         
-        if passaro_indice == self.particula_focal_indice:
-            #Prestar atenção...pois ordena em ordem crescente!!! Válido apenas para problemas de minimização!!
-            bando_ordenado = sorted(bando, key = lambda p: p.p_fitness);
-            melhor_passaro = bando_ordenado[0];
-            
-        else:
-            if bando[passaro_indice].p_fitness < bando[self.particula_focal_indice].p_fitness:
-                melhor_passaro = bando[passaro_indice]
+        if passaro_indice != None:
+            if passaro_indice == self.particula_focal_indice:
+                #Prestar atencao...pois ordena em ordem crescente!!! Valido apenas para problemas de minimizacao!!
+                bando_ordenado = sorted(bando, key = lambda p: p.p_fitness);
+                melhor_passaro = bando_ordenado[0];
+                
             else:
-                melhor_passaro = bando[self.particula_focal_indice]
-        
-        g = copy.deepcopy(melhor_passaro);
-        return g;
+                if bando[passaro_indice].p_fitness < bando[self.particula_focal_indice].p_fitness:
+                    melhor_passaro = bando[passaro_indice]
+                else:
+                    melhor_passaro = bando[self.particula_focal_indice]
+            
+            g = copy.deepcopy(melhor_passaro);
+            return g;
+        else:
+            return None
         
