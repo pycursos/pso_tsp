@@ -2,21 +2,61 @@
 '''
 Created on 18/08/2012
 
-@ author: periclesmiranda
+
+@author: periclesmiranda, marcelcaraciolo
 '''
-from Passaro import Passaro
+
+import math
 import random
-from Constants import Constants, TSPConstants, TSPClanConstants
-from Sphere import Sphere
+
+from Passaro import Passaro
+from Constants import TSPConstants, TSPClanConstants
+
 from topologias.Estrela import Estrela
+from topologias.Local import Local
+from topologias.Focal import Focal
 from topologias.Clan import Clan
+
+
 from Util import Util
 from TSP import Leitor, Cidade
 
+from Relatorio import Relatorio
 
-import math
-
+''''Variaveis Globais'''
+melhores_particulas = []
+fitnesses = [];
 mapa  = []
+
+
+class TSP_PSO_Clan(TSP_PSO):
+
+    def __init__(self, data):
+
+        self.passaros = self.inicializarBando()
+
+        self.clans = self.inicializarClans()
+
+        self.topologia = Clan(self.clans)
+
+        self.conference = self.topologia.getClanLeaders(bandos=self.clans)
+
+        self.topologia._setG(self.topologia.getG(bando=self.conference))
+
+    def inicializarClans(self):
+        indices_passaros = range(len(self.passaros))
+        random.shuffle(indices_passaros)
+
+        assert TSPClanConstants.TAM_BANDO == TSPClanConstants.CLAN_SIZE * TSPClanConstants.NUMBER_OF_CLANS, 'TAM_BANDO = CLAN_SIZE * NUMBER_OF_CLANS'
+
+        clans = []
+
+        for i in range(TSPClanConstants.NUMBER_OF_CLANS):
+            clans.append([])
+            for j in range(TSPClanConstants.CLAN_SIZE):
+                clans[i].append(self.passaros[indices_passaros.pop()])
+
+        return clans
 
 
 class TSP(object):
@@ -53,109 +93,18 @@ def cria_mapa(caminho=None, tipo_arquivo=None):
             nova_cidade.set_y(YLocs[i])
             mapa.append(nova_cidade)
 
-
-class PSO(object):
-
-    def __init__(self):
-        self.passaros = self.inicializarBando();
-        self.topologia = Estrela();
-
-        self.topologia._setG(self.topologia.getG(self.passaros));
-
-    def inicializarBando(self):
-        passaros = []
-        for i in range(0, Constants.TAM_BANDO):
-            passaro = Passaro();
-            velocity_init = [0]*Constants.N_DIMENSION;
-            position_init = velocity_init[::];
-
-            passaro.velocidade = velocity_init;
-            passaro.posicao = self.__rand_uniform(position_init, Constants.LIMITE_ESPACO_BUSCA[0], Constants.LIMITE_ESPACO_BUSCA[1]);
-            passaro.p = passaro.posicao[::];
-            passaro.g = passaro.posicao[::];
-            passaro.fitness = Sphere.evaluate(passaro.posicao)
-            passaro.p_fitness = passaro.fitness;
-
-            passaros.append(passaro);
-
-        return passaros;
-
-    def simular(self):
-
-        fitnesses = [];
-
-        for i in range(0, Constants.NUMERO_ITERACOES):
-            self._executar();
-            print "Simulacao " + str((float(i) / Constants.NUMERO_ITERACOES) * 100) + "%";
-
-            melhor_passaro = self.topologia._getG().p_fitness;
-            fitnesses.append(melhor_passaro);
-
-        print fitnesses
-
-    def _executar(self):
-        for i in range(0, Constants.TAM_BANDO):
-            self.atualizaInformacao(i);
-
-            self.passaros[i].fitness = Sphere.evaluate(self.passaros[i].posicao)
-
-            self.passaros[i].atualizaP();
-
-    def atualizaInformacao(self, indice_passaro):
-        g_best = self.topologia.getG(indice_passaro, self.passaros)
-
-        for i in range(0, Constants.N_DIMENSION):
-            self.__atualizaVelocidade(self.passaros[indice_passaro], g_best, i);
-
-        self.__atualizaPosicao(self.passaros[indice_passaro]);
-
-    def __atualizaPosicao(self, passaro):
-        velocidade_atual = sum(passaro.velocidade)/Constants.N_DIMENSION;
-
-        #A velocidade atual vai definir o numero de mudanças que vão precisar ser feitas
-        for j in range(int(velocidade_atual)):
-            # 50/50 chance.
-            if random.random() > 0.5:
-                Util.dispor_aleatoriamente(passaro)
-
-            # Push it closer to it's best neighbor.
-            Util.copiar_da_particula(passaro.g, passaro.posicao)
-
-    def __atualizaVelocidade(self, passaro, g_best, i):
-        c1 = Constants.C1;
-        c2 = Constants.C2;
-
-        velocidade_atual = passaro.velocidade[i];
-
-        posicao_atual = passaro.posicao[i];
-        p = passaro.p[i];
-
-        passaro.g = g_best.p[::];
-
-        nova_velocidade = 0.4*velocidade_atual + c1*random.random()*(p - posicao_atual) + c2*random.random()*(passaro.g[i] - posicao_atual);
-
-        if(nova_velocidade > Constants.LIMITE_VELOCIDADE[1]):
-            nova_velocidade = Constants.LIMITE_VELOCIDADE[1];
-        elif(nova_velocidade < Constants.LIMITE_VELOCIDADE[0]):
-            nova_velocidade = Constants.LIMITE_VELOCIDADE[0];
-
-        passaro.velocidade[i] = nova_velocidade;
-
-    def __rand_uniform(self, vector, inferior_limit, superior_limit):
-        for i in range(len(vector)):
-            randomReal = random.uniform(inferior_limit,
-                                        superior_limit)
-            vector[i] = randomReal;
-        return vector;
+    if tipo_arquivo == 'M':
+        pass
+    if tipo_arquivo == 'N':
+        pass
 
 
-
-class TSP_PSO(PSO):
+class TSP_PSO():
     def __init__(self, data, topologia):
         self.passaros = self.inicializarBando()
         self.topologia = topologia()
 
-        self.topologia._setG(self.topologia.getG(bando=self.passaros))
+        self.topologia._setG(self.topologia.getG(None, bando=self.passaros))
 
     def inicializarBando(self):
         passaros = []
@@ -167,7 +116,6 @@ class TSP_PSO(PSO):
             passaro.posicao = range(TSPConstants.N_DIMENSION)
             random.shuffle(passaro.posicao)
 
-            #self.__rand_uniform(position_init, TSPConstants.LIMITE_ESPACO_BUSCA[0], TSPConstants.LIMITE_ESPACO_BUSCA[1]);
             passaro.p = passaro.posicao[::];
             passaro.g = passaro.posicao[::];
             passaro.fitness = TSP.evaluate(passaro.posicao)
@@ -178,14 +126,14 @@ class TSP_PSO(PSO):
         return passaros
 
     def simular(self):
-        fitnesses = [];
-
         for i in range(0, TSPConstants.NUMERO_ITERACOES):
             self._executar();
             print "Simulacao " + str((float(i) / TSPConstants.NUMERO_ITERACOES) * 100) + "%";
 
-            melhor_passaro = self.topologia.getG(bando=self.passaros).p_fitness;
-            fitnesses.append(melhor_passaro);
+            melhor_passaro = self.topologia.bestOfBests(bando=self.passaros);
+
+            melhores_particulas.append(melhor_passaro)
+            fitnesses.append(melhor_passaro.p_fitness);
 
         print fitnesses
 
@@ -198,9 +146,9 @@ class TSP_PSO(PSO):
         self.__atualizaPosicao(self.passaros[indice_passaro]);
 
     def __atualizaPosicao(self, passaro):
-        velocidade_atual = sum(passaro.velocidade)/TSPConstants.N_DIMENSION;
+        velocidade_atual = sum(passaro.velocidade)/TSPConstants.N_DIMENSION/2;
 
-        #A velocidade atual vai definir o numero de mudanças que vão precisar ser feitas
+        #A velocidade atual vai definir o numero de mudancas que vao precisar ser feitas
         for j in range(int(velocidade_atual)):
             # 50/50 chance.
             if random.random() > 0.5:
@@ -223,12 +171,14 @@ class TSP_PSO(PSO):
 
         nova_velocidade = 0.4*velocidade_atual + c1*random.random()*(p - posicao_atual) + c2*random.random()*(passaro.g[i] - posicao_atual);
 
+        '''
         if(nova_velocidade > TSPConstants.LIMITE_VELOCIDADE[1]):
             nova_velocidade = TSPConstants.LIMITE_VELOCIDADE[1];
         elif(nova_velocidade < TSPConstants.LIMITE_VELOCIDADE[0]):
             nova_velocidade = TSPConstants.LIMITE_VELOCIDADE[0];
+        '''
 
-        passaro.velocidade[i] = nova_velocidade;
+        passaro.velocidade[i] = abs(nova_velocidade);
 
     def _executar(self):
         for i in range(0, TSPConstants.TAM_BANDO):
@@ -237,6 +187,7 @@ class TSP_PSO(PSO):
             self.passaros[i].fitness = TSP.evaluate(self.passaros[i].posicao)
 
             self.passaros[i].atualizaP();
+
 
 
 class TSP_PSO_Clan(TSP_PSO):
@@ -344,12 +295,36 @@ class TSP_PSO_Clan(TSP_PSO):
         passaro.velocidade[i] = nova_velocidade;
 
 
-
 if __name__ == '__main__':
     import os, sys
-    path = os.path.abspath(os.path.dirname(sys.argv[1]))
-    cria_mapa(path+ '/data/a280.tsp', 'C')
+    #path = os.path.abspath(os.path.dirname())
+    path_a280 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/a280.tsp'
+    path_br17 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/br17.atsp'
+    path_brazil58 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/brazil58.tsp'
+
+    #Roda stub
+    #cria_mapa(None, None)
+
+    #Roda a280.tsp
+    #cria_mapa(path_a280, 'C')
+
+    #Roda br17.tsp
+    #cria_mapa(path_br17, 'N')
+
+    #Roda brazil58.tsp
+    cria_mapa(path_brazil58, 'M')
+
     TSPConstants.N_DIMENSION = len(mapa)
 
-    algorithm = TSP_PSO_Clan(mapa)
+    #algorithm = TSP_PSO_Clan(mapa)
+    #algorithm.simular()
+
+    algorithm = TSP_PSO(mapa, Estrela)
     algorithm.simular()
+
+    #Roda stub
+    #Relatorio.imprimir_resultado(melhores_particulas, 86.63)
+
+    Relatorio.imprimir_resultado(melhores_particulas, None)
+    Relatorio.imprimir_grafico(range(TSPConstants.NUMERO_ITERACOES), fitnesses)
+

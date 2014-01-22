@@ -27,19 +27,16 @@ class Constants(object):
 class TSPConstants(object):
 
     '''Numero de Cidades'''
-    N_CIDADES = 280
+    N_DIMENSION = 280
 
     '''Number of iterations'''
-    NUMERO_ITERACOES = 1000
+    NUMERO_ITERACOES = 100
 
     '''The number of particles which flies through the swarm'''
     TAM_BANDO = 30
 
-    '''The bounds of the search space'''
-    LIMITE_ESPACO_BUSCA = [-5.12, 5.12]
-
     '''The inferior and superior bounds of the velocity'''
-    LIMITE_VELOCIDADE = [-30, 30]
+    LIMITE_VELOCIDADE = [-1000, 1000]
 
     C1 = 2.05
     C2 = 2.05

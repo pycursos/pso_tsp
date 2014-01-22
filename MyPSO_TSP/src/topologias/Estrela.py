@@ -12,7 +12,7 @@ class Estrela(Topologia):
     #Seleciona a melhor solucao do enxame.
     def getG(self, passaro_indice=None, bando=None):
 
-        #Prestar atenção...pois ordena em ordem crescente!!! Válido apenas para problemas de minimização!!
+        #Prestar atencaoo...pois ordena em ordem crescente!!! Valido apenas para problemas de minimizacao!!
         bando_ordenado = sorted(bando, key = lambda p: p.p_fitness);
         melhor_passaro = bando_ordenado[0];
 
