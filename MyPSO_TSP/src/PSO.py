@@ -164,13 +164,13 @@ class TSP_PSO():
 
 class TSP_PSO_Clan(TSP_PSO):
 
-    def __init__(self, data):
+    def __init__(self, data, topologia):
 
         self.passaros = self.inicializarBando()
 
         self.clans = self.inicializarClans()
 
-        self.topologia = Clan(self.clans)
+        self.topologia = topologia(self.clans)
 
         self.conference = self.topologia.getClanLeaders(bandos=self.clans)
 
@@ -295,8 +295,8 @@ if __name__ == '__main__':
 
     TSPConstants.N_DIMENSION = len(mapa)
 
-    #algorithm = TSP_PSO_Clan(mapa)
-    #algorithm.simular()
+    algorithm = TSP_PSO_Clan(mapa, Clan)
+    algorithm.simular()
 
     algorithm = TSP_PSO(mapa, Estrela)
 
