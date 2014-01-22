@@ -22,41 +22,13 @@ from Util import Util
 from TSP import Leitor, Cidade
 
 from Relatorio import Relatorio
+from topologias import Clan
+from topologias.VonNeumann import VonNeumann
 
 ''''Variaveis Globais'''
 melhores_particulas = []
 fitnesses = [];
 mapa  = []
-
-
-class TSP_PSO_Clan(TSP_PSO):
-
-    def __init__(self, data):
-
-        self.passaros = self.inicializarBando()
-
-        self.clans = self.inicializarClans()
-
-        self.topologia = Clan(self.clans)
-
-        self.conference = self.topologia.getClanLeaders(bandos=self.clans)
-
-        self.topologia._setG(self.topologia.getG(bando=self.conference))
-
-    def inicializarClans(self):
-        indices_passaros = range(len(self.passaros))
-        random.shuffle(indices_passaros)
-
-        assert TSPClanConstants.TAM_BANDO == TSPClanConstants.CLAN_SIZE * TSPClanConstants.NUMBER_OF_CLANS, 'TAM_BANDO = CLAN_SIZE * NUMBER_OF_CLANS'
-
-        clans = []
-
-        for i in range(TSPClanConstants.NUMBER_OF_CLANS):
-            clans.append([])
-            for j in range(TSPClanConstants.CLAN_SIZE):
-                clans[i].append(self.passaros[indices_passaros.pop()])
-
-        return clans
 
 
 class TSP(object):
@@ -308,6 +280,13 @@ if __name__ == '__main__':
     #Roda a280.tsp
     #cria_mapa(path_a280, 'C')
 
+
+    #Roda stub
+    #cria_mapa(None, 'C')
+
+    #Roda a280.tsp
+    cria_mapa(None, 'C')
+
     #Roda br17.tsp
     #cria_mapa(path_br17, 'N')
 
@@ -320,11 +299,21 @@ if __name__ == '__main__':
     #algorithm.simular()
 
     algorithm = TSP_PSO(mapa, Estrela)
+
+    #cria_mapa(path_brazil58, 'M')
+
+    TSPConstants.N_DIMENSION = len(mapa)
+
+    algorithm = TSP_PSO(mapa, VonNeumann)
     algorithm.simular()
 
     #Roda stub
     #Relatorio.imprimir_resultado(melhores_particulas, 86.63)
 
     Relatorio.imprimir_resultado(melhores_particulas, None)
+
+    Relatorio.imprimir_resultado(melhores_particulas, 86.63)
+
+    #Relatorio.imprimir_resultado(melhores_particulas, None)
     Relatorio.imprimir_grafico(range(TSPConstants.NUMERO_ITERACOES), fitnesses)
 
