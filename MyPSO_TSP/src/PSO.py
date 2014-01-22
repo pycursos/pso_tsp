@@ -50,28 +50,6 @@ class TSP(object):
         return fitness
 
 
-def cria_mapa(caminho=None, tipo_arquivo=None):
-    global mapa
-    data = Leitor.cria_coordenadas(caminho, tipo_arquivo)
-
-    if tipo_arquivo == 'C':
-        XLocs = data.x_coords
-        YLocs = data.y_coords
-
-        numero_cidades = len(data.cities)
-
-        for i in range(numero_cidades):
-            nova_cidade = Cidade()
-            nova_cidade.set_x(XLocs[i])
-            nova_cidade.set_y(YLocs[i])
-            mapa.append(nova_cidade)
-
-    if tipo_arquivo == 'M':
-        pass
-    if tipo_arquivo == 'N':
-        pass
-
-
 class TSP_PSO():
     def __init__(self, data, topologia):
         self.passaros = self.inicializarBando()
@@ -196,14 +174,14 @@ class TSP_PSO_Clan(TSP_PSO):
         return clans
 
     def simular(self):
-        fitnesses = [];
-
         for i in range(0, TSPClanConstants.NUMERO_ITERACOES):
             self._executar();
             print "Simulacao " + str((float(i) / TSPClanConstants.NUMERO_ITERACOES) * 100) + "%";
 
-            melhor_passaro = self.topologia.getG(bando=self.conference).p_fitness;
-            fitnesses.append(melhor_passaro);
+            melhor_passaro = self.topologia.bestOfBests(bando=self.passaros);
+
+            melhores_particulas.append(melhor_passaro)
+            fitnesses.append(melhor_passaro.p_fitness);
 
         print fitnesses
 
@@ -240,7 +218,7 @@ class TSP_PSO_Clan(TSP_PSO):
     def __atualizaPosicao(self, passaro):
         velocidade_atual = sum(passaro.velocidade)/TSPConstants.N_DIMENSION;
 
-        #A velocidade atual vai definir o numero de mudanças que vão precisar ser feitas
+        #A velocidade atual vai definir o numero de mudanï¿½as que vï¿½o precisar ser feitas
         for j in range(int(velocidade_atual)):
             # 50/50 chance.
             if random.random() > 0.5:
@@ -271,57 +249,3 @@ class TSP_PSO_Clan(TSP_PSO):
         '''
 
         passaro.velocidade[i] = nova_velocidade;
-
-
-if __name__ == '__main__':
-    import os, sys
-    #path = os.path.abspath(os.path.dirname())
-    #path_a280 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/a280.tsp'
-    #path_br17 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/br17.atsp'
-    #path_brazil58 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/brazil58.tsp'
-
-    #Roda stub
-    #cria_mapa(None, None)
-
-    #Roda a280.tsp
-    #cria_mapa(path_a280, 'C')
-
-
-    #Roda stub
-    #cria_mapa(None, 'C')
-
-    #Roda a280.tsp
-    cria_mapa(None, 'C')
-
-    #Roda br17.tsp
-    #cria_mapa(path_br17, 'N')
-
-    #Roda brazil58.tsp
-    #cria_mapa(path_brazil58, 'M')
-
-    TSPConstants.N_DIMENSION = len(mapa)
-
-    from topologias.Clan import Clan
-
-    algorithm = TSP_PSO_Clan(mapa, Clan)
-    algorithm.simular()
-
-    #algorithm = TSP_PSO(mapa, Estrela)
-
-    #cria_mapa(path_brazil58, 'M')
-
-    #TSPConstants.N_DIMENSION = len(mapa)
-
-    #algorithm = TSP_PSO(mapa, VonNeumann)
-    #algorithm.simular()
-
-    #Roda stub
-    #Relatorio.imprimir_resultado(melhores_particulas, 86.63)
-
-    #Relatorio.imprimir_resultado(melhores_particulas, None)
-
-    #Relatorio.imprimir_resultado(melhores_particulas, 86.63)
-
-    #Relatorio.imprimir_resultado(melhores_particulas, None)
-    #Relatorio.imprimir_grafico(range(TSPConstants.NUMERO_ITERACOES), fitnesses)
-
