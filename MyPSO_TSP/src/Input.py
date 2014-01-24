@@ -12,7 +12,7 @@ class Input(object):
     problemas = {
                  'STUB': (None, 'C'),
                  'A280': (CAMINHO + 'a280.tsp', 'C'),
-                 'BR17': (CAMINHO + 'br17.atsp', 'N'),
-                 'BRAZIL58': (CAMINHO + 'brazil58.tsp', 'M')
+                 'BR17': (CAMINHO + 'br17.atsp', 'M'),
+                 'BRAZIL58': (CAMINHO + 'brazil58.tsp', 'N')
                  }
         

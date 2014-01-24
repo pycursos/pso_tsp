@@ -11,10 +11,12 @@ class Relatorio(object):
     
     @staticmethod
     def imprimir_resultado(particulas, alvo=None):
-        if particulas[-1].p_fitness <= alvo:
-            sys.stdout.write("Alvo alcancado.\n")
-        else:
-            sys.stdout.write("Alvo nao alcancado.\n")
+        
+        if alvo != None:
+            if particulas[-1].p_fitness <= alvo:
+                sys.stdout.write("Alvo alcancado.\n")
+            else:
+                sys.stdout.write("Alvo nao alcancado.\n")
         
         sys.stdout.write("Menor caminho: ")
         for j in range(len(particulas[0].posicao)):

@@ -26,5 +26,5 @@ if __name__ == '__main__':
     
     simulador = Simulador()
     
-    ''''(1)TOPOLOGIA DESEJADA (2)PROBLEMA A SER RESOLVIDO (3)NUMERO DE ITERACOES'''
-    simulador.executar_grafico('VONNEUMANN', 'STUB', 100)
+    ''''(1)TOPOLOGIA DESEJADA (2)PROBLEMA A SER RESOLVIDO (3)NUMERO DE ITERACOES (4) numero de individuos'''
+    simulador.executar_grafico('ESTRELA', 'BRAZIL58', 100, 30)

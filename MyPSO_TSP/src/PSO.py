@@ -167,13 +167,6 @@ class TSP_PSO():
 
         nova_velocidade = 0.4*velocidade_atual + c1*random.random()*(p - posicao_atual) + c2*random.random()*(passaro.g[i] - posicao_atual);
 
-        '''
-        if(nova_velocidade > TSPConstants.LIMITE_VELOCIDADE[1]):
-            nova_velocidade = TSPConstants.LIMITE_VELOCIDADE[1];
-        elif(nova_velocidade < TSPConstants.LIMITE_VELOCIDADE[0]):
-            nova_velocidade = TSPConstants.LIMITE_VELOCIDADE[0];
-        '''
-
         passaro.velocidade[i] = abs(nova_velocidade);
 
     def _executar(self):
@@ -288,68 +281,5 @@ class TSP_PSO_Clan(TSP_PSO):
 
         nova_velocidade = 0.4*velocidade_atual + c1*random.random()*(p - posicao_atual) + c2*random.random()*(passaro.g[i] - posicao_atual);
 
-        '''
-        if(nova_velocidade > TSPConstants.LIMITE_VELOCIDADE[1]):
-            nova_velocidade = TSPConstants.LIMITE_VELOCIDADE[1];
-        elif(nova_velocidade < TSPConstants.LIMITE_VELOCIDADE[0]):
-            nova_velocidade = TSPConstants.LIMITE_VELOCIDADE[0];
-        '''
-
         passaro.velocidade[i] = nova_velocidade;
-
-
-if __name__ == '__main__':
-    import os, sys
-    #path = os.path.abspath(os.path.dirname())
-    #path_a280 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/a280.tsp'
-    path_br17 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/br17.atsp'
-    #path_brazil58 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/brazil58.tsp'
-    path_br17 = '/Users/marcelcaraciolo/Projects/consultorias/pso/pso_final/pso_tsp/MyPSO_TSP/src/data/br17.atsp'
-    path_brazil58 =  '/Users/marcelcaraciolo/Projects/consultorias/pso/pso_final/pso_tsp/MyPSO_TSP/src/data/brazil58.tsp'
-
-    #Roda stub
-    #cria_mapa(None, None)
-
-    #Roda a280.tsp
-    #cria_mapa(path_a280, 'C')
-
-
-    #Roda stub
-    #cria_mapa(None, 'C')
-
-    #Roda a280.tsp
-    #cria_mapa(None, 'C')
-
-    #Roda br17.tsp
-    #cria_mapa(path_br17, 'M')
-
-    #Roda brazil58.tsp
-    cria_mapa(path_brazil58, 'N')
-
-    TSPConstants.N_DIMENSION = len(mapa)
-
-    #from topologias.Clan import Clan
-
-    #algorithm = TSP_PSO_Clan(mapa, Clan)
-    #algorithm.simular()
-
-    algorithm = TSP_PSO(mapa, Estrela)
-    algorithm.simular()
-
-    #cria_mapa(path_brazil58, 'M')
-
-    #TSPConstants.N_DIMENSION = len(mapa)
-
-    #algorithm = TSP_PSO(mapa, VonNeumann)
-    #algorithm.simular()
-
-    #Roda stub
-    #Relatorio.imprimir_resultado(melhores_particulas, 86.63)
-
-    #Relatorio.imprimir_resultado(melhores_particulas, None)
-
-    #Relatorio.imprimir_resultado(melhores_particulas, 86.63)
-
-    #Relatorio.imprimir_resultado(melhores_particulas, None)
-    #Relatorio.imprimir_grafico(range(TSPConstants.NUMERO_ITERACOES), fitnesses)
 
