@@ -65,7 +65,7 @@ class TSP_Distances(object):
 
         return fitness
 
-
+#evaluation function to choose: TSP_Distances for br17 and brazil58 and TSP for a280.tsp
 fitness_function = TSP
 
 
@@ -220,14 +220,14 @@ class TSP_PSO_Clan(TSP_PSO):
         return clans
 
     def simular(self):
-        fitnesses = [];
-
         for i in range(0, TSPClanConstants.NUMERO_ITERACOES):
             self._executar();
             print "Simulacao " + str((float(i) / TSPClanConstants.NUMERO_ITERACOES) * 100) + "%";
 
-            melhor_passaro = self.topologia.getG(bando=self.conference).p_fitness;
-            fitnesses.append(melhor_passaro);
+            melhor_passaro = self.topologia.bestOfBests(bando=self.passaros);
+
+            melhores_particulas.append(melhor_passaro)
+            fitnesses.append(melhor_passaro.p_fitness);
 
         print fitnesses
 
@@ -265,7 +265,7 @@ class TSP_PSO_Clan(TSP_PSO):
     def __atualizaPosicao(self, passaro):
         velocidade_atual = sum(passaro.velocidade)/TSPConstants.N_DIMENSION;
 
-        #A velocidade atual vai definir o numero de mudanças que vão precisar ser feitas
+        #A velocidade atual vai definir o numero de mudanï¿½as que vï¿½o precisar ser feitas
         for j in range(int(velocidade_atual)):
             # 50/50 chance.
             if random.random() > 0.5:
