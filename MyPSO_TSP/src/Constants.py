@@ -30,7 +30,7 @@ class TSPConstants(object):
     N_DIMENSION = 280
 
     '''Number of iterations'''
-    NUMERO_ITERACOES = 100
+    NUMERO_ITERACOES = 300
 
     '''The number of particles which flies through the swarm'''
     TAM_BANDO = 30

@@ -49,9 +49,28 @@ class TSP(object):
 
         return fitness
 
+class TSP_Distances(object):
+    @staticmethod
+    def evaluate(posicao):
+        fitness = 0.0
+        for i in xrange(TSPConstants.N_DIMENSION):
+            if i == TSPConstants.N_DIMENSION - 1:
+                #print posicao[i], posicao[0]
+                #print mapa[posicao[i]+1]
+                fitness += mapa[posicao[i]+1][posicao[0]+1]
+            else:
+                #print posicao[i], posicao[i+1]
+                #print mapa[posicao[i]]
+                fitness += mapa[posicao[i]+1][posicao[i+1]+1]
+
+        return fitness
+
+
+fitness_function = TSP
+
 
 def cria_mapa(caminho=None, tipo_arquivo=None):
-    global mapa
+    global mapa, fitness_function
     data = Leitor.cria_coordenadas(caminho, tipo_arquivo)
 
     if tipo_arquivo == 'C':
@@ -65,11 +84,14 @@ def cria_mapa(caminho=None, tipo_arquivo=None):
             nova_cidade.set_x(XLocs[i])
             nova_cidade.set_y(YLocs[i])
             mapa.append(nova_cidade)
+        fitness_function = TSP
 
     if tipo_arquivo == 'M':
-        pass
+        mapa = data.distances
+        fitness_function = TSP_Distances
     if tipo_arquivo == 'N':
-        pass
+        mapa = data.distances
+        fitness_function = TSP_Distances
 
 
 class TSP_PSO():
@@ -80,6 +102,7 @@ class TSP_PSO():
         self.topologia._setG(self.topologia.getG(None, bando=self.passaros))
 
     def inicializarBando(self):
+        global fitness_function
         passaros = []
         for i in range(0, TSPConstants.TAM_BANDO):
             passaro = Passaro();
@@ -91,7 +114,7 @@ class TSP_PSO():
 
             passaro.p = passaro.posicao[::];
             passaro.g = passaro.posicao[::];
-            passaro.fitness = TSP.evaluate(passaro.posicao)
+            passaro.fitness = fitness_function.evaluate(passaro.posicao)
             passaro.p_fitness = passaro.fitness;
 
             passaros.append(passaro);
@@ -154,10 +177,11 @@ class TSP_PSO():
         passaro.velocidade[i] = abs(nova_velocidade);
 
     def _executar(self):
+        global fitness_function
         for i in range(0, TSPConstants.TAM_BANDO):
             self.atualizaInformacao(i);
 
-            self.passaros[i].fitness = TSP.evaluate(self.passaros[i].posicao)
+            self.passaros[i].fitness = fitness_function.evaluate(self.passaros[i].posicao)
 
             self.passaros[i].atualizaP();
 
@@ -208,6 +232,7 @@ class TSP_PSO_Clan(TSP_PSO):
         print fitnesses
 
     def _executar(self):
+        global fitness_function
         #Atualizando as infos de cada clan intra.
         for i in range(0, TSPClanConstants.NUMBER_OF_CLANS):
             bando = self.clans[i]
@@ -220,7 +245,7 @@ class TSP_PSO_Clan(TSP_PSO):
         self.conference = self.topologia.getClanLeaders(bandos=self.clans)
         for i in range(0, len(self.conference)):
             self.atualizaInformacaoConference(self.conference, i);
-            self.conference[i].fitness = TSP.evaluate(self.conference[i].posicao)
+            self.conference[i].fitness = fitness_function.evaluate(self.conference[i].posicao)
             self.conference[i].atualizaP();
 
     def atualizaInformacaoConference(self, bando, indice_passaro):
@@ -277,8 +302,10 @@ if __name__ == '__main__':
     import os, sys
     #path = os.path.abspath(os.path.dirname())
     #path_a280 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/a280.tsp'
-    #path_br17 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/br17.atsp'
+    path_br17 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/br17.atsp'
     #path_brazil58 = 'C:/Documents and Settings/periclesmiranda/Meus documentos/eclipse-jee-ganymede-SR2-win32/Projects/AATSP_Simulador/src/data/brazil58.tsp'
+    path_br17 = '/Users/marcelcaraciolo/Projects/consultorias/pso/pso_final/pso_tsp/MyPSO_TSP/src/data/br17.atsp'
+    path_brazil58 =  '/Users/marcelcaraciolo/Projects/consultorias/pso/pso_final/pso_tsp/MyPSO_TSP/src/data/brazil58.tsp'
 
     #Roda stub
     #cria_mapa(None, None)
@@ -291,22 +318,23 @@ if __name__ == '__main__':
     #cria_mapa(None, 'C')
 
     #Roda a280.tsp
-    cria_mapa(None, 'C')
+    #cria_mapa(None, 'C')
 
     #Roda br17.tsp
-    #cria_mapa(path_br17, 'N')
+    #cria_mapa(path_br17, 'M')
 
     #Roda brazil58.tsp
-    #cria_mapa(path_brazil58, 'M')
+    cria_mapa(path_brazil58, 'N')
 
     TSPConstants.N_DIMENSION = len(mapa)
 
-    from topologias.Clan import Clan
+    #from topologias.Clan import Clan
 
-    algorithm = TSP_PSO_Clan(mapa, Clan)
+    #algorithm = TSP_PSO_Clan(mapa, Clan)
+    #algorithm.simular()
+
+    algorithm = TSP_PSO(mapa, Estrela)
     algorithm.simular()
-
-    #algorithm = TSP_PSO(mapa, Estrela)
 
     #cria_mapa(path_brazil58, 'M')
 
