@@ -11,24 +11,12 @@ import random
 
 from Passaro import Passaro
 from Constants import TSPConstants, TSPClanConstants
-
-from topologias.Estrela import Estrela
-from topologias.Local import Local
-from topologias.Focal import Focal
-
-from topologias.Clan import Clan
-
-
 from Util import Util
 from TSP import Leitor, Cidade
 
-from Relatorio import Relatorio
-from topologias import Clan
-from topologias.VonNeumann import VonNeumann
-
 ''''Variaveis Globais'''
-melhores_particulas = []
-fitnesses = [];
+fitnesses = []
+best_particle = []
 mapa  = []
 
 
@@ -128,10 +116,10 @@ class TSP_PSO():
 
             melhor_passaro = self.topologia.bestOfBests(bando=self.passaros);
 
-            melhores_particulas.append(melhor_passaro)
             fitnesses.append(melhor_passaro.p_fitness);
-
-        print fitnesses
+            
+        best_particle.append(melhor_passaro)
+            
 
     def atualizaInformacao(self, indice_passaro):
         g_best = self.topologia.getG(indice_passaro, self.passaros)
@@ -219,10 +207,9 @@ class TSP_PSO_Clan(TSP_PSO):
 
             melhor_passaro = self.topologia.bestOfBests(bando=self.passaros);
 
-            melhores_particulas.append(melhor_passaro)
             fitnesses.append(melhor_passaro.p_fitness);
-
-        print fitnesses
+            
+        best_particle.append(melhor_passaro)
 
     def _executar(self):
         global fitness_function
