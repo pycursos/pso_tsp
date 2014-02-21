@@ -41,6 +41,8 @@ class TSPConstants(object):
     C1 = 2.05
     C2 = 2.05
 
+    '''Dispersion iteration'''
+    DISPERSION_ITERACAO =  200
 
 class TSPClanConstants(TSPConstants):
 
