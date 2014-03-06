@@ -44,6 +44,12 @@ class TSPConstants(object):
     '''Dispersion iteration'''
     DISPERSION_ITERACAO =  200
 
+    '''
+    Problem stop criteria
+    '''
+    STOP_CRITERIA = None
+
+
 class TSPClanConstants(TSPConstants):
 
     '''

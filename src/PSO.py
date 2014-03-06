@@ -83,13 +83,17 @@ def cria_mapa(caminho=None, tipo_arquivo=None):
 
 
 class TSP_PSO():
-    def __init__(self, data, topologia, dispersion=False):
+    def __init__(self, data, topologia, dispersion=False, iteration_criteria=False):
         self.passaros = self.inicializarBando()
         self.topologia = topologia()
 
         self.topologia._setG(self.topologia.getG(None, bando=self.passaros))
 
         self.dispersion =  dispersion
+
+        self.best_fitness = 100000000
+
+        self.iteration_criteria = iteration_criteria
 
     def inicializarBando(self):
         global fitness_function
@@ -131,27 +135,63 @@ class TSP_PSO():
 
         return passaros
 
+    def stop_criteria(self):
+        print 'Minimo ate agora encontrado:', self.best_fitness, 'Minimo Global:', TSPConstants.STOP_CRITERIA
+        if self.best_fitness > TSPConstants.STOP_CRITERIA:
+            return False
+        else:
+            return True
+
     def simular(self):
-        for i in range(0, TSPConstants.NUMERO_ITERACOES):
+        if self.iteration_criteria:
+            for i in range(0, TSPConstants.NUMERO_ITERACOES):
+                print i
+                if self.dispersion:
+                    if (i % TSPConstants.DISPERSION_ITERACAO == 0) and i != 0:
+                        #get the top 10 best particles, store it, and initialize the rest.
+                        #only for minimization problems
+                        bando_ordenado = sorted(self.passaros, key = lambda p: p.p_fitness)
+                        self.passaros =  bando_ordenado[:10] +  self.reiniciarBando(bando_ordenado[10:])
+                        print 'reinicializado o bando'
+                        assert len(self.passaros) == TSPConstants.TAM_BANDO
 
-            if self.dispersion:
-                if (i % TSPConstants.DISPERSION_ITERACAO == 0) and i != 0:
-                    #get the top 10 best particles, store it, and initialize the rest.
-                    #only for minimization problems
-                    bando_ordenado = sorted(self.passaros, key = lambda p: p.p_fitness)
-                    self.passaros =  bando_ordenado[:10] +  self.reiniciarBando(bando_ordenado[10:])
-                    print 'reinicializado o bando'
-                    assert len(self.passaros) == TSPConstants.TAM_BANDO
+                self._executar();
+                print "Simulacao " + str((float(i) / TSPConstants.NUMERO_ITERACOES) * 100) + "%";
 
-            self._executar();
-            print "Simulacao " + str((float(i) / TSPConstants.NUMERO_ITERACOES) * 100) + "%";
+                melhor_passaro = self.topologia.bestOfBests(bando=self.passaros);
 
-            melhor_passaro = self.topologia.bestOfBests(bando=self.passaros);
+                fitnesses.append(melhor_passaro.p_fitness);
 
-            fitnesses.append(melhor_passaro.p_fitness);
+                self.best_fitness = melhor_passaro.p_fitness
 
-        best_particle.append(melhor_passaro)
+            best_particle.append(melhor_passaro)
 
+        else:
+            i = 0
+            while not self.stop_criteria():
+                if self.dispersion:
+                    if (i % TSPConstants.DISPERSION_ITERACAO == 0) and i != 0:
+                        #get the top 10 best particles, store it, and initialize the rest.
+                        #only for minimization problems
+                        bando_ordenado = sorted(self.passaros, key = lambda p: p.p_fitness)
+                        self.passaros =  bando_ordenado[:10] +  self.reiniciarBando(bando_ordenado[10:])
+                        print 'reinicializado o bando'
+                        assert len(self.passaros) == TSPConstants.TAM_BANDO
+
+                self._executar();
+                #print "Simulacao " + str((float(i) / TSPConstants.NUMERO_ITERACOES) * 100) + "";
+
+                melhor_passaro = self.topologia.bestOfBests(bando=self.passaros);
+
+                fitnesses.append(melhor_passaro.p_fitness);
+
+                self.best_fitness = melhor_passaro.p_fitness
+
+                i+=1
+
+            best_particle.append(melhor_passaro)
+
+            print 'A simulacao atingiu o minimo na iteracao %d'  %  i
 
     def atualizaInformacao(self, indice_passaro):
         g_best = self.topologia.getG(indice_passaro, self.passaros)
@@ -202,7 +242,7 @@ class TSP_PSO():
 
 class TSP_PSO_Clan(TSP_PSO):
 
-    def __init__(self, data, topologia, dispersion=False):
+    def __init__(self, data, topologia, dispersion=False, iteration_criteria=False):
 
         self.passaros = self.inicializarBando()
 
@@ -212,12 +252,17 @@ class TSP_PSO_Clan(TSP_PSO):
 
         self.dispersion = dispersion
 
+        self.iteration_criteria = iteration_criteria
+
         for idx, topology in enumerate(self.topologia.topology_bands):
             topology._setG(topology.getG(bando=self.clans[idx]))
 
         self.conference = self.topologia.getClanLeaders(bandos=self.clans)
         self.topologia.clansTopology._setG((self.topologia.clansTopology.getG(bando=self.conference)))
         self.topologia._setG(self.topologia.getG(bando=self.conference))
+
+        self.best_fitness = 100000000
+
 
 
     def inicializarClans(self):
@@ -236,28 +281,59 @@ class TSP_PSO_Clan(TSP_PSO):
         return clans
 
     def simular(self):
-        for i in range(0, TSPClanConstants.NUMERO_ITERACOES):
+        if self.iteration_criteria:
+            for i in range(0, TSPClanConstants.NUMERO_ITERACOES):
 
-            if self.dispersion:
-                if (i % TSPClanConstants.DISPERSION_ITERACAO == 0) and i != 0:
-                    #get the top 10 best particles, store it, and initialize the rest.
-                    #get the top 10 best particles, store it, and initialize the rest.
-                    #only for minimization problems
-                    bando_ordenado = sorted(self.passaros, key = lambda p: p.p_fitness)
-                    self.passaros =  bando_ordenado[:10] +  self.reiniciarBando(bando_ordenado[10:])
-                    print 'reinicializado o bando'
-                    self.clans = self.inicializarClans()
-                    assert len(self.passaros) == TSPConstants.TAM_BANDO
+                if self.dispersion:
+                    if (i % TSPClanConstants.DISPERSION_ITERACAO == 0) and i != 0:
+                        #get the top 10 best particles, store it, and initialize the rest.
+                        #get the top 10 best particles, store it, and initialize the rest.
+                        #only for minimization problems
+                        bando_ordenado = sorted(self.passaros, key = lambda p: p.p_fitness)
+                        self.passaros =  bando_ordenado[:10] +  self.reiniciarBando(bando_ordenado[10:])
+                        print 'reinicializado o bando'
+                        self.clans = self.inicializarClans()
+                        assert len(self.passaros) == TSPConstants.TAM_BANDO
 
 
-            self._executar();
-            print "Simulacao " + str((float(i) / TSPClanConstants.NUMERO_ITERACOES) * 100) + "%";
+                self._executar();
+                print "Simulacao " + str((float(i) / TSPClanConstants.NUMERO_ITERACOES) * 100) + "%";
 
-            melhor_passaro = self.topologia.bestOfBests(bando=self.passaros);
+                melhor_passaro = self.topologia.bestOfBests(bando=self.passaros);
 
-            fitnesses.append(melhor_passaro.p_fitness);
+                fitnesses.append(melhor_passaro.p_fitness);
 
-        best_particle.append(melhor_passaro)
+                self.best_fitness = melhor_passaro.p_fitness
+
+            best_particle.append(melhor_passaro)
+        else:
+            i = 0
+            while not self.stop_criteria():
+                if self.dispersion:
+                    if (i % TSPClanConstants.DISPERSION_ITERACAO == 0) and i != 0:
+                        #get the top 10 best particles, store it, and initialize the rest.
+                        #get the top 10 best particles, store it, and initialize the rest.
+                        #only for minimization problems
+                        bando_ordenado = sorted(self.passaros, key = lambda p: p.p_fitness)
+                        self.passaros =  bando_ordenado[:10] +  self.reiniciarBando(bando_ordenado[10:])
+                        print 'reinicializado o bando'
+                        self.clans = self.inicializarClans()
+                        assert len(self.passaros) == TSPConstants.TAM_BANDO
+
+
+                self._executar();
+                #print "Simulacao " + str((float(i) / TSPClanConstants.NUMERO_ITERACOES) * 100) + "%";
+
+                melhor_passaro = self.topologia.bestOfBests(bando=self.passaros);
+
+                fitnesses.append(melhor_passaro.p_fitness);
+
+                self.best_fitness = melhor_passaro.p_fitness
+
+                i+=1
+
+            best_particle.append(melhor_passaro)
+
 
     def _executar(self):
         global fitness_function

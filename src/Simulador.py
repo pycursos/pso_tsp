@@ -24,7 +24,8 @@ mean_simulation = []
 
 class Simulador(object):
 
-    def executar(self, nome_topologia, nome_problema, numero_iteracoes, numero_particulas, executions, dispersion , dispersion_iteration):
+    def executar(self, nome_topologia, nome_problema, numero_iteracoes, numero_particulas, executions, dispersion , \
+                dispersion_iteration, iteration_criteria):
         #Calculando o tempo
         time_inicio = time()
 
@@ -36,6 +37,7 @@ class Simulador(object):
 
             problema = Input.problemas[nome_problema]
             PSO.cria_mapa(problema[0], problema[1])
+            TSPConstants.STOP_CRITERIA = problema[2]
 
         else:
             print 'Nome do problema invalido. Veja nomes disponiveis no pacote "input/Dados."'
@@ -44,19 +46,20 @@ class Simulador(object):
         TSPConstants.N_DIMENSION = len(PSO.mapa)
         algoritmo = None
 
+
         for i in range(executions):
 
             if nome_topologia == 'ESTRELA':
-                algoritmo = TSP_PSO(PSO.mapa, Estrela, dispersion)
+                algoritmo = TSP_PSO(PSO.mapa, Estrela, dispersion, iteration_criteria)
             elif nome_topologia == 'LOCAL':
-                algoritmo = TSP_PSO(PSO.mapa, Local, dispersion)
+                algoritmo = TSP_PSO(PSO.mapa, Local, dispersion, iteration_criteria)
             elif nome_topologia == 'FOCAL':
-                algoritmo = TSP_PSO(PSO.mapa, Focal, dispersion)
+                algoritmo = TSP_PSO(PSO.mapa, Focal, dispersion, iteration_criteria)
             elif nome_topologia == 'VONNEUMANN':
-                algoritmo = TSP_PSO(PSO.mapa, VonNeumann, dispersion)
+                algoritmo = TSP_PSO(PSO.mapa, VonNeumann, dispersion, iteration_criteria)
             elif nome_topologia == 'CLAN':
                 TSPClanConstants.N_DIMENSION = len(PSO.mapa)
-                algoritmo = TSP_PSO_Clan(PSO.mapa, Clan, dispersion)
+                algoritmo = TSP_PSO_Clan(PSO.mapa, Clan, dispersion, iteration_criteria)
             else:
                 print 'Nao existe topologia com este nome.'
 
@@ -77,9 +80,12 @@ class Simulador(object):
         mean_simulation.append(Relatorio.imprimir_resultado_final(fitnesses_of_best, mean_fitnesses_evolution, best_particles, time_total))
 
 
-    def executar_grafico(self, nome_topologia, nome_problema, numero_iteracoes, numero_particulas, executions, dispersion, dispersion_iteration):
-        self.executar(nome_topologia, nome_problema, numero_iteracoes, numero_particulas, executions, dispersion, dispersion_iteration)
+    def executar_grafico(self, nome_topologia, nome_problema, numero_iteracoes, numero_particulas, executions, dispersion, dispersion_iteration, iteration_stop_criteria):
+        self.executar(nome_topologia, nome_problema, numero_iteracoes, numero_particulas, executions, dispersion, dispersion_iteration, iteration_stop_criteria)
 
-        Relatorio.imprimir_grafico(range(TSPConstants.NUMERO_ITERACOES), mean_simulation[0])
+        if iteration_stop_criteria:
+            Relatorio.imprimir_grafico(range(TSPConstants.NUMERO_ITERACOES), mean_simulation[0])
 
+        else:
+            Relatorio.imprimir_grafico(range(len(mean_simulation[0])), mean_simulation[0])
 
